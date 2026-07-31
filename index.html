@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>駄菓子屋ゲームセンター ｜ ブラウザーで遊べる懐かしのゲーム</title>
+<meta name="description" content="子どもの頃、駄菓子屋の店先にあったゲームをブラウザーで再現しています。インストール不要・登録不要。PCでもスマホでも無料で遊べます。">
+<meta name="theme-color" content="#05060a">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="駄菓子屋ゲームセンター">
+<meta property="og:title" content="駄菓子屋ゲームセンター ｜ ブラウザーで遊べる懐かしのゲーム">
+<meta property="og:description" content="子どもの頃、駄菓子屋の店先にあったゲームをブラウザーで再現しています。インストール不要・登録不要。PCでもスマホでも無料。">
+<meta property="og:url" content="https://yhdog0425-eng.github.io/">
+<meta property="og:image" content="https://yhdog0425-eng.github.io/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="駄菓子屋ゲームセンター">
+<meta name="twitter:description" content="ブラウザーで遊べる懐かしのゲーム。無料・インストール不要。">
+<meta name="twitter:image" content="https://yhdog0425-eng.github.io/ogp.png">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2011%208'%3E%3Cpath%20fill='%238dff9e'%20d='M2,0h1v1h-1zM8,0h1v1h-1zM3,1h1v1h-1zM7,1h1v1h-1zM2,2h7v1h-7zM1,3h2v1h-2zM4,3h3v1h-3zM8,3h2v1h-2zM0,4h11v1h-11zM0,5h1v1h-1zM2,5h7v1h-7zM10,5h1v1h-1zM0,6h1v1h-1zM2,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM3,7h2v1h-2zM6,7h2v1h-2z'/%3E%3C/svg%3E">
+
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --green: #8dff9e;
+    --green-d: #6cff8e;
+    --blue: #7bd6ff;
+    --pink: #ff6b8b;
+    --yellow: #ffe066;
+    --ink: #05060a;
+    --dim: #4d6b55;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--ink);
+    color: #cdebd4;
+    font-family: "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  /* 画面全体にうっすら走査線をかける（ゲーム本編と同じ質感） */
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: 50;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,.16) 2px, rgba(0,0,0,.16) 4px);
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 49;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 42%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%);
+  }
+
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px 60px; }
+
+  /* --- 見出し --- */
+  header { text-align: center; padding: 56px 0 18px; position: relative; }
+  .invaders { display: flex; justify-content: center; gap: 26px; margin-bottom: 22px; }
+  .invaders svg { width: 38px; height: auto; }
+  .invaders svg:nth-child(1) { fill: var(--pink); }
+  .invaders svg:nth-child(2) { fill: var(--blue); }
+  .invaders svg:nth-child(3) { fill: var(--green); }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .invaders svg:nth-child(1) { animation: bob 2.4s ease-in-out infinite; }
+  .invaders svg:nth-child(2) { animation: bob 2.4s ease-in-out .3s infinite; }
+  .invaders svg:nth-child(3) { animation: bob 2.4s ease-in-out .6s infinite; }
+
+  h1 {
+    margin: 0 0 12px;
+    font-size: clamp(26px, 6.4vw, 50px);
+    letter-spacing: .12em;
+    color: var(--green-d);
+    text-shadow: 0 0 26px rgba(108,255,142,.55);
+  }
+  .lead { margin: 0 auto; max-width: 30em; font-size: clamp(13px, 3.2vw, 16px); line-height: 2; color: #9cc4a7; }
+  .badge {
+    display: inline-block; margin-top: 20px;
+    background: var(--yellow); color: var(--ink);
+    font-weight: bold; font-size: clamp(12px, 3vw, 14px);
+    letter-spacing: .08em; padding: 8px 20px; border-radius: 4px;
+  }
+
+  /* --- 筐体カード --- */
+  .cabs {
+    display: grid; gap: 24px; margin-top: 44px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  .cab {
+    background: linear-gradient(#1a1c1e, #0d0f10 45%, #141617);
+    border: 1px solid #2a2d30; border-radius: 14px;
+    padding: 10px 14px 12px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.06);
+    display: flex; flex-direction: column;
+    text-decoration: none; color: inherit;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  a.cab:hover, a.cab:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 52px rgba(0,0,0,.75), 0 0 0 1px rgba(108,255,142,.35);
+  }
+  .marquee {
+    text-align: center; font-size: 11px; letter-spacing: .38em;
+    color: var(--yellow); padding: 5px 0 9px;
+    text-shadow: 0 0 10px rgba(255,224,102,.45);
+    overflow: hidden; white-space: nowrap;
+  }
+  .screen {
+    position: relative; background: #000;
+    border: 2px solid #14181a; border-radius: 8px;
+    aspect-ratio: 16 / 10; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .screen .soon {
+    color: var(--dim); font-size: 13px; letter-spacing: .22em; text-align: center; line-height: 2.2;
+  }
+  .body { padding: 12px 4px 2px; flex: 1; }
+  .body h2 { margin: 0 0 6px; font-size: 17px; letter-spacing: .04em; color: var(--green); }
+  .body .year { font-size: 11px; letter-spacing: .16em; color: var(--dim); }
+  .body p { margin: 8px 0 0; font-size: 13px; line-height: 1.9; color: #9cc4a7; }
+  .panelbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 4px 0; font-size: 10px; letter-spacing: .18em; color: #5d6b62;
+  }
+  .coin { color: var(--yellow); animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 0%,49% { opacity: 1; } 50%,100% { opacity: .15; } }
+  .cab.soon-cab { opacity: .5; }
+  .cab.soon-cab .marquee { color: #5d6b62; text-shadow: none; }
+
+  /* --- 下部 --- */
+  .foot { margin-top: 52px; text-align: center; }
+  .foot .note { font-size: 12px; line-height: 2.1; color: #7d9c86; }
+  .foot .yt {
+    display: inline-block; margin-top: 22px;
+    border: 1px solid #2c6b3f; border-radius: 6px;
+    padding: 11px 24px; font-size: 13px; letter-spacing: .06em;
+    color: #cdebd4; text-decoration: none;
+  }
+  .foot .yt:hover { background: #10221a; }
+  .copyright { margin-top: 34px; font-size: 10px; letter-spacing: .2em; color: #33463a; }
+  @media (prefers-reduced-motion: reduce) {
+    .invaders svg, .coin { animation: none; }
+    a.cab:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="invaders" aria-hidden="true">
+      <svg viewBox="0 0 12 8"><path d="M5,0h2v1h-2zM3,1h6v1h-6zM2,2h8v1h-8zM1,3h2v1h-2zM4,3h4v1h-4zM9,3h2v1h-2zM0,4h12v1h-12zM2,5h3v1h-3zM7,5h3v1h-3zM1,6h2v1h-2zM9,6h2v1h-2zM2,7h2v1h-2zM8,7h2v1h-2z"/></svg>
+      <svg viewBox="0 0 10 8"><path d="M4,0h2v1h-2zM3,1h4v1h-4zM2,2h6v1h-6zM1,3h2v1h-2zM4,3h2v1h-2zM7,3h2v1h-2zM2,4h6v1h-6zM4,5h2v1h-2zM3,6h1v1h-1zM6,6h1v1h-1zM2,7h1v1h-1zM7,7h1v1h-1z"/></svg>
+      <svg viewBox="0 0 11 8"><path d="M2,0h1v1h-1zM8,0h1v1h-1zM3,1h1v1h-1zM7,1h1v1h-1zM2,2h7v1h-7zM1,3h2v1h-2zM4,3h3v1h-3zM8,3h2v1h-2zM0,4h11v1h-11zM0,5h1v1h-1zM2,5h7v1h-7zM10,5h1v1h-1zM0,6h1v1h-1zM2,6h1v1h-1zM8,6h1v1h-1zM10,6h1v1h-1zM3,7h2v1h-2zM6,7h2v1h-2z"/></svg>
+    </div>
+    <h1>駄菓子屋ゲームセンター</h1>
+    <p class="lead">
+      子どもの頃、駄菓子屋の店先に置いてあったゲーム。<br>
+      あの頃の感じのまま、ブラウザーで遊べるようにしています。
+    </p>
+    <div class="badge">無料・インストール不要・登録不要</div>
+  </header>
+
+  <main class="cabs" id="cabs"></main>
+
+  <div class="foot">
+    <p class="note">
+      PCはキーボード、スマホは画面のボタンで遊べます。<br>
+      うまく動かないときは、ページを再読み込みしてみてください。
+    </p>
+    <a class="yt" href="https://www.youtube.com/@takaya5372" target="_blank" rel="noopener">▶ 動画で見る（YouTube）</a>
+    <div class="copyright">&copy; takaya</div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* ============================================================
+   ゲーム一覧。作品が増えたら、ここに1つ足すだけで筐体が並びます。
+     title : ゲーム名
+     year  : 画面に出す年号（元ネタが流行った頃の年）
+     desc  : 短い紹介文
+     url   : 遊べるページのURL
+     thumb : サムネイル画像のURL（省略可）
+     ready : false にすると「準備中」の暗い筐体になります
+   ============================================================ */
+const GAMES = [
+  {
+    title: "レトロインベーダー84",
+    year: 1978,
+    desc: "上から迫ってくるアレ。ブラウン管の走査線と INSERT COIN の点滅まで再現しました。",
+    url: "https://yhdog0425-eng.github.io/retro-invaders-84/",
+    thumb: "https://yhdog0425-eng.github.io/retro-invaders-84/ogp.png",
+    ready: true,
+  },
+  { title: "準備中", year: null, desc: "次の1台をつくっています。", ready: false },
+  { title: "準備中", year: null, desc: "もう1台、置く予定です。", ready: false },
+];
+
+const cabs = document.getElementById("cabs");
+
+for (const g of GAMES) {
+  const el = document.createElement(g.ready ? "a" : "div");
+  el.className = "cab" + (g.ready ? "" : " soon-cab");
+  if (g.ready) {
+    el.href = g.url;
+    el.setAttribute("aria-label", g.title + " を遊ぶ");
+  }
+
+  const screen = g.ready && g.thumb
+    ? `<div class="screen"><img src="${g.thumb}" alt="${g.title} の画面" loading="lazy"></div>`
+    : `<div class="screen"><div class="soon">COMING<br>SOON</div></div>`;
+
+  el.innerHTML =
+    `<div class="marquee">${g.ready ? g.title.toUpperCase() : "- - -"}</div>` +
+    screen +
+    `<div class="body">` +
+      (g.year ? `<div class="year">${g.year}</div>` : `<div class="year">&nbsp;</div>`) +
+      `<h2>${g.title}</h2>` +
+      `<p>${g.desc}</p>` +
+    `</div>` +
+    `<div class="panelbar">` +
+      `<span>1 PLAYER</span>` +
+      (g.ready ? `<span class="coin">INSERT COIN</span>` : `<span>&nbsp;</span>`) +
+      `<span>${g.ready ? "PLAY &rsaquo;" : "&nbsp;"}</span>` +
+    `</div>`;
+
+  cabs.appendChild(el);
+}
+})();
+</script>
+</body>
+</html>
